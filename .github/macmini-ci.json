@@ -1,0 +1,11 @@
+{
+  "commands": [
+    ["bash", ".github/scripts/macmini-build.sh"]
+  ],
+  "outputs": [
+    "app/build/outputs/apk/**/*.apk",
+    "app/build/outputs/bundle/**/*.aab",
+    "app/build/reports/**",
+    "app/build/test-results/**"
+  ]
+}

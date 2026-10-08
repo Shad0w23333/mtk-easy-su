@@ -6,6 +6,7 @@ on:
   workflow_dispatch: {}
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: macmini-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -20,9 +21,12 @@ defaults:
     shell: bash -e -o pipefail {0}
 jobs:
   check:
-    name: Offline source checks
-    if: ${{ github.actor == github.repository_owner && (github.event_name == 'push' || github.event_name == 
-      'workflow_dispatch') }}
+    name: Gradle build and project checks
+    if: >-
+      ${{ github.repository_owner == 'Shad0w23333' &&
+          github.actor == 'Shad0w23333' &&
+          github.triggering_actor == 'Shad0w23333' &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
     runs-on:
     - self-hosted
     - macOS
@@ -35,12 +39,15 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
     - uses: actions/checkout@v4
+      if: ${{ env.MACMINI_FRESH == 'true' }}
       with:
         persist-credentials: false
         submodules: false
     - name: Offline syntax and manifest checks
+      if: ${{ env.MACMINI_FRESH == 'true' }}
       run: python3 /Users/Shared/macmini-ci/bin/validate-assets.py
-    - name: Record check coverage
+    - name: Gradle build and project checks
+      if: ${{ env.MACMINI_FRESH == 'true' }}
       run: python3 /Users/Shared/macmini-ci/bin/project-ci.py
     - name: Collect CI outputs
       if: ${{ always() && env.MACMINI_FRESH == 'true' }}
